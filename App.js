@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
@@ -10,6 +10,8 @@ import { Colors } from "./constants/styles";
 import AuthContextProvider, { AuthContext } from "./store/auth-context";
 import IconButton from './components/ui/IconButton';
 import { Text } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import AppLoading from "expo-app-loading";
 
 const Stack = createNativeStackNavigator();
 
@@ -58,12 +60,34 @@ function Navigation() {
   );
 }
 
+
+function Root(){
+  const authCtx = useContext(AuthContext)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchToken () {
+        const token = await AsyncStorage.getItem('token')
+        token && authCtx.authenthicate(token)
+        setIsLoading(false)
+    }
+    fetchToken()
+  },[])
+
+  if(isLoading){
+    return <AppLoading />
+  }
+
+  return <Navigation />
+}
+
 export default function App() {
+
   return (
     <>
       <StatusBar style="light" />
       <AuthContextProvider>
-        <Navigation />
+        <Root />
       </AuthContextProvider>
     </>
   );
