@@ -1,10 +1,19 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useContext } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { AuthContext } from '../store/auth-context';
 
-function WelcomeScreen() {
+function WelcomeScreen({navigation}) {
+  const authCtx = useContext(AuthContext);
   return (
     <View style={styles.rootContainer}>
       <Text style={styles.title}>Welcome!</Text>
       <Text>You authenticated successfully!</Text>
+      <Pressable onPress={() => {
+        console.log('press')
+        authCtx.logout()
+        }}>
+        <Text>logout</Text>
+      </Pressable>
     </View>
   );
 }
